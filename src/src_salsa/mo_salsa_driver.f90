@@ -3,7 +3,6 @@ MODULE mo_salsa_driver
 USE mo_submctl, ONLY : t_section, debug
 IMPLICIT NONE
 
-
 !---------------------------------------------------------------
 !
 ! MO_SALSA_DRIVER:
@@ -74,7 +73,7 @@ IMPLICIT NONE
                        pa_Ridry,   pa_Rsdry,                            &
                        pa_Rawet,   pa_Rcwet,   pa_Rpwet,                &
                        pa_Riwet,   pa_Rswet,                            &
-                       prunmode, prtcl, tstep, level)
+                       prunmode, prtcl, tstep, dbg2, time, level)
 
     USE mo_submctl, ONLY : nbins,ncld,nprc,pi6,          &
                                nice,nsnw,             &
@@ -88,7 +87,7 @@ IMPLICIT NONE
     IMPLICIT NONE
 
     INTEGER, INTENT(in) :: pnx,pny,pnz,n4                       ! Dimensions: x,y,z,number of chemical species  
-    REAL, INTENT(in)    :: tstep                     ! Model timestep length
+    REAL, INTENT(in)    :: tstep, time                      ! Model timestep length
 
     REAL, INTENT(in)    :: press(pnz,pnx,pny), &            ! Pressure (Pa)
                                tk(pnz,pnx,pny),    &            ! Temperature (K)
@@ -118,6 +117,7 @@ IMPLICIT NONE
                                                          ! 3: Regular runtime call'
     INTEGER, INTENT(in) :: level                         ! thermodynamical level
 
+    LOGICAL, INTENT(in) :: dbg2
 
     TYPE(ComponentIndex), INTENT(in) :: prtcl ! Object containing the indices of different aerosol components for mass arrays
 
@@ -471,12 +471,12 @@ IMPLICIT NONE
 
 
              ! If this is an initialization call, calculate the equilibrium particle
-             If (prunmode == 1) CALL equilibration(kbdim,klev,   &
+             If (prunmode == 1) CALL equilibration(kproma,kbdim,klev,   &
                                                     init_rh,in_t,aero,.TRUE.)
 
              ! Juha: Should be removed when possible
-             If (prunmode == 1) CALL equilibration_cloud(kbdim,klev,   &
-                                                    cloud,ice)
+             If (prunmode == 1) CALL equilibration_cloud(kproma,kbdim,klev,   &
+                                                    in_rs,in_t,cloud,ice)
 
 
              ! Convert to #/m3
@@ -489,13 +489,13 @@ IMPLICIT NONE
              ! ***************************************!
              !                Run SALSA               !
              ! ***************************************!
-             CALL salsa(kbdim,  klev,             &
+             CALL salsa(kproma, kbdim,  klev,   krow,          &
                         in_p,   in_rv,  in_rs,  in_rsi,        &
                         in_t,  in_tt, tstep,                         &
                         zgso4,  zgocnv, zgocsv, zghno3,        &
                         zgnh3,  aero,   cloud,  precp,         &
                         ice,    snow,                          &
-                        actd,   in_w,  prtcl,  level)
+                        actd,   in_w,  prtcl, time, level)
 
 
              ! Calculate tendencies (convert back to #/kg or kg/kg)

@@ -16,7 +16,7 @@ CONTAINS
   !   nonvolatile OC should be added???)
   !********************************************************************
   !
-  ! subroutine NUCLEATION(kbdim,klev, &
+  ! subroutine NUCLEATION(kproma,kbdim,klev, &
   !       )
   !
   !********************************************************************
@@ -68,7 +68,7 @@ CONTAINS
   !
   !---------------------------------------------------------------------
 
-  SUBROUTINE nucleation(kbdim,  klev,      &
+  SUBROUTINE nucleation(kproma, kbdim,  klev,   krow,   &
                         paero,  ptemp,  prh,    ppres,  &
                         pcsa,   pcocnv, ptstep, pj3n3,  &
                         pxsa,   pxocnv, ppbl            )
@@ -97,8 +97,10 @@ CONTAINS
 
     !-- Input and output variables -------------
     INTEGER, INTENT(IN) ::        &
+         kproma,                  & ! number of horiz. grid kproma
          kbdim,                   & ! dimension for arrays
-         klev                       ! number of vertical klev
+         klev,                    & ! number of vertical klev
+         krow                       ! local latitude index
 
 
     REAL, INTENT(IN) ::       &
@@ -156,14 +158,18 @@ CONTAINS
          zKeff,                   & ! "effective" coagulation coefficient between fresly-nucleated particles
          zGRtot,                  & ! Total growth rate
          zCoagStot,               & ! Total losses due to coagulation, includes condensation and self-coagulation
+         zcv,                     & ! gas-phase velocity of clusters
 
         !variables determined for the m-parameter
+         zRc, &
+         zRx, &
+         zR2(fn2b), &
          zRc2(fn2b), &
          zRx2(fn2b), &
          zm_c, &
          zm_x, &
          zm_2(fn2b), &
-         zcv_c, &       ! zcv = gas-phase velocity of clusters
+         zcv_c, &
          zcv_x, &
          zcv_2(fn2b), &
          zcv_c2(fn2b), &
@@ -206,7 +212,7 @@ CONTAINS
 
        ppbl_bin = klev
 
-       CALL binnucl(kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa, znoc, zdcrit, &
                     ppbl_bin, zksa, zkocnv)
@@ -215,12 +221,12 @@ CONTAINS
 
        zc_h2so4 = pcsa*1.e-6           ! [#/cm3]
 
-       CALL binnucl(kbdim, klev,     &
+       CALL binnucl(kproma,  kbdim, klev,     &
                     zc_h2so4, ptemp,  prh,         &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL actnucl(kbdim, klev, &
+       CALL actnucl(kproma, kbdim, klev, &
                     pcsa,    zjnuc,  zdcrit, ppbl ,&
                     znsa,    znoc,   zksa,  zkocnv,act_coeff)
 
@@ -228,12 +234,12 @@ CONTAINS
 
        zc_h2so4 = pcsa*1.e-6           ! [#/cm3]
 
-       CALL binnucl( kbdim, klev,      &
+       CALL binnucl(kproma,  kbdim, klev,      &
                     zc_h2so4, ptemp,  prh,          &
                     zjnuc,    znsa,  znoc, zdcrit,   &
                     ppbl, zksa, zkocnv)
 
-       CALL kinnucl(kbdim, klev, &
+       CALL kinnucl(kproma, kbdim, klev, &
                     zc_h2so4,ptemp,          &
                     zjnuc,   zdcrit, ppbl,   &
                     znsa,    znoc,   zksa, zkocnv)
@@ -246,7 +252,7 @@ CONTAINS
 
        zc_h2so4 = pcsa*1.e-6           ! [#/cm3]
 
-       CALL ternucl(kbdim,  klev,         &
+       CALL ternucl(kproma,  kbdim,  klev,         &
                     zc_h2so4, zmixnh3, ptemp,   prh,     &
                     zjnuc,    znsa,    znoc,    zdcrit,  &
                     zksa,    zkocnv)
@@ -256,12 +262,12 @@ CONTAINS
        zc_org = pcocnv*1.e-6           ! [#/cm3]
        zc_h2so4 = pcsa*1.e-6           ! [#/cm3]
 
-       CALL binnucl(kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL orgnucl(kbdim, klev, &
+       CALL orgnucl(kproma, kbdim, klev, &
                     pcocnv,  zjnuc,  zdcrit, ppbl, &
                     znsa, znoc, zksa, zkocnv)
 
@@ -270,12 +276,12 @@ CONTAINS
 
        zc_h2so4 = pcsa*1.e-6
 
-       CALL binnucl(kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL sumnucl(kbdim, klev,  &
+       CALL sumnucl(kproma, kbdim, klev,  &
                     pcsa, pcocnv, zjnuc,&
                     zdcrit, ppbl, &
                     znsa, znoc, zksa, zkocnv)
@@ -285,12 +291,12 @@ CONTAINS
        zc_h2so4 = pcsa*1.e-6
        zc_org = pcocnv*1.e-6
 
-       CALL binnucl(kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL hetnucl(kbdim, klev,  &
+       CALL hetnucl(kproma, kbdim, klev,  &
                     zc_h2so4, zc_org, zjnuc,   &
                     zdcrit, ppbl, &
                     znsa, znoc, zksa, zkocnv)
@@ -301,12 +307,12 @@ CONTAINS
        zc_h2so4 = pcsa*1.e-6
        zc_org = pcocnv*1.e-6
 
-       CALL binnucl( kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL SAnucl(kbdim, klev,   &
+       CALL SAnucl(kproma, kbdim, klev,   &
                    zc_h2so4, zc_org, zjnuc, &
                    zdcrit, ppbl, &
                    znsa, znoc, zksa, zkocnv)
@@ -318,12 +324,12 @@ CONTAINS
        zc_h2so4 = pcsa*1.e-6
        zc_org = pcocnv*1.e-6
 
-       CALL binnucl( kbdim, klev, &
+       CALL binnucl(kproma,  kbdim, klev, &
                     zc_h2so4, ptemp,  prh,     &
                     zjnuc,    znsa,   znoc, zdcrit, &
                     ppbl, zksa, zkocnv)
 
-       CALL SAORGnucl(kbdim, klev, &
+       CALL SAORGnucl(kproma, kbdim, klev, &
                     zc_h2so4, zc_org, zjnuc,  zdcrit, ppbl, &
                     znsa, znoc, zksa, zkocnv)
 
@@ -475,7 +481,7 @@ CONTAINS
              zRc2 = zdcrit(ii,jj)/2. + paero(ii,jj,:)%dwet/2. ! [m]
              zRx2 = reglim(1)/2. + paero(ii,jj,:)%dwet/2.  ! [m]
 
-             zm_c = 4./3.*pi*(zdcrit(ii,jj)/2.)**3*rhosu!(rhosu*pxsa+rhooc*pxocnv)    ! [kg] particle mass assumed to be only H2SO4
+             zm_c = 4./3.*pi*(zdcrit(ii,jj)/2.)**3*rhosu!(rhosu*pxsa+rhooc*pxocnv)    ! [kg] T�ss� oletettu hiukkasen massaksi vain H2SO4
              zm_x = 4./3.*pi*(reglim(1)/2.)**3*rhosu!(rhosu*pxsa+rhooc*pxocnv)       ! [kg]
              zm_2 = 4./3.*pi*(paero(ii,jj,:)%dwet/2.)**3*rhosu!(rhosu*pxsa+rhooc*pxocnv)   ! [kg]
 
@@ -672,7 +678,7 @@ CONTAINS
   !
   !---------------------------------------------------------------------
 
-  SUBROUTINE binnucl(kbdim,      klev,                  &
+  SUBROUTINE binnucl(kproma,    kbdim,      klev,                  &
                      pc_sa,     ptemp,      prh,                   &
                      pnuc_rate, pn_crit_sa, pn_crit_ocnv, pd_crit, &
                      ppbl,      pk_sa,      pk_ocnv)
@@ -683,6 +689,7 @@ CONTAINS
 
     !-- Input variables -------------------
     INTEGER, INTENT(IN) :: &
+         kproma,  &     ! number of horiz. grid kproma
          kbdim,  &      ! dimension for arrays
          klev           ! number of vertical klev
 
@@ -723,8 +730,8 @@ CONTAINS
     zpbl(:) = ppbl(:)
     if (lnuctropo) then
 
-   DO ii = 1,kbdim !  horizontal kbdim in the slab
-      DO jj = 1,zpbl(ii) !  vertical grid
+       DO ii = 1,kbdim !  horizontal kbdim in the slab
+          DO jj = 1,zpbl(ii) !  vertical grid
              !-- 1) Checking that we are in the validity range of the parameterization -----------
 
              zt = max(ptemp(ii,jj), 190.15)
@@ -930,7 +937,7 @@ CONTAINS
   !********************************************************************
 
 
-  SUBROUTINE ternucl(kbdim,      klev,                  &
+  SUBROUTINE ternucl(kproma,    kbdim,      klev,                  &
                      pc_sa,     pc_nh3,     ptemp,        prh,     &
                      pnuc_rate, pn_crit_sa, pn_crit_ocnv, pd_crit, &
                      pk_sa,     pk_ocnv)
@@ -938,6 +945,7 @@ CONTAINS
     IMPLICIT NONE
     !-- Input variables -------------------
     INTEGER, INTENT(IN) ::       &
+         kproma,                 & ! number of horiz. grid kproma
          kbdim,                  & ! dimension for arrays
          klev                      ! number of vertical klev
 
@@ -1109,7 +1117,7 @@ CONTAINS
   !
   !**************************************************************
 
-  SUBROUTINE kinnucl(kbdim,        klev,          &
+  SUBROUTINE kinnucl(kproma,     kbdim,        klev,          &
                      pc_sa,      ptemp,                       &
                      pnuc_rate,  pd_crit,      ppbl,          &
                      pn_crit_sa, pn_crit_ocnv, pk_sa, pk_ocnv)
@@ -1118,6 +1126,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &    ! number of horiz. grid kproma
           kbdim,   &    ! dimension for arrays
           klev          ! number of vertical klev
 
@@ -1143,8 +1152,8 @@ CONTAINS
      zpbl(:)=ppbl(:)
 
      ! loops over
-     DO jj = zpbl(ii),klev !  vertical grid
-         DO ii = 1,kbdim !  horizontal kbdim in the slab
+     DO ii = 1,kbdim !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
 
            !  pnuc_rate(ii,jj) = 1.19386e-17*sqrt(ptemp(ii,jj))*pc_sa(ii,jj)**2 ! [#/(m3 s)]
            pnuc_rate(ii,jj) = 5.0e-13*pc_sa(ii,jj)**2*1.E6 ! [#/(m3 s)]
@@ -1164,7 +1173,7 @@ CONTAINS
    !********************************************************************
    !********************************************************************
 
-   SUBROUTINE actnucl( kbdim,        klev,                   &
+   SUBROUTINE actnucl(kproma,     kbdim,        klev,                   &
                       psa_conc,   pnuc_rate,    pd_crit, ppbl,          &
                       pn_crit_sa, pn_crit_ocnv, pk_sa,   pk_ocnv, activ)
 
@@ -1172,6 +1181,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) ::   &
+          kproma,             & ! number of horiz. grid kproma
           kbdim,              & ! dimension for arrays
           klev                  ! number of vertical klev
 
@@ -1231,7 +1241,7 @@ CONTAINS
    ! ORGNUCL scheme conciders only the organic matter in nucleation
    ! ---------------------------------------------------------------
 
-   SUBROUTINE orgnucl(kbdim,        klev,            &
+   SUBROUTINE orgnucl(kproma,     kbdim,        klev,            &
               pc_org,     pnuc_rate,    pd_crit, ppbl,   &
                       pn_crit_sa, pn_crit_ocnv, pk_sa,   pk_ocnv)
 
@@ -1239,6 +1249,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &     ! number of horiz. grid kproma
           kbdim,   &     ! dimension for arrays
           klev           ! number of vertical klev
 
@@ -1292,7 +1303,7 @@ CONTAINS
    ! nucleation - activation type of nucleation
    ! ---------------------------------------------------------------
 
-   SUBROUTINE sumnucl(kbdim,        klev,                     &
+   SUBROUTINE sumnucl(kproma,     kbdim,        klev,                     &
                       pc_sa,      pc_org,       pnuc_rate, pd_crit, ppbl, &
                       pn_crit_sa, pn_crit_ocnv, pk_sa,     pk_ocnv)
 
@@ -1300,6 +1311,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &     ! number of horiz. grid kproma
           kbdim,  &      ! dimension for arrays
           klev           ! number of vertical levels
 
@@ -1326,7 +1338,7 @@ CONTAINS
 
      !-------------------------------------
      zpbl(:)=ppbl(:)
-    DO ii = 1,kbdim !  horizontal kbdim in the slab
+     DO ii = 1,kbdim !  horizontal kbdim in the slab
         DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = As1*pc_sa(ii,jj)+As2*pc_org(ii,jj) ![#/m3/s]
 
@@ -1352,7 +1364,7 @@ CONTAINS
    ! nucleation - heteromolecular nucleation
    ! ---------------------------------------------------------------
 
-   SUBROUTINE hetnucl(kbdim,        klev,          &
+   SUBROUTINE hetnucl(kproma,     kbdim,        klev,          &
                       pc_sa,      pc_org,                      &
                       pnuc_rate,  pd_crit,      ppbl,          &
                       pn_crit_sa, pn_crit_ocnv, pk_sa, pk_ocnv)
@@ -1361,6 +1373,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &     ! number of horiz. grid kproma
           kbdim,  &      ! dimension for arrays
           klev           ! number of vertical klev
 
@@ -1413,7 +1426,7 @@ CONTAINS
    ! sulphuric acid H2SO4 with both of the available vapours
    ! ---------------------------------------------------------------
 
-   SUBROUTINE SAnucl(kbdim,        klev,          &
+   SUBROUTINE SAnucl(kproma,     kbdim,        klev,          &
                      pc_sa,      pc_org,                      &
                      pnuc_rate,  pd_crit,      ppbl,          &
                      pn_crit_sa, pn_crit_ocnv, pk_sa, pk_ocnv)
@@ -1422,6 +1435,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &     ! number of horiz. grid kproma
           kbdim,   &     ! dimension for arrays
           klev           ! number of vertical klev
 
@@ -1472,7 +1486,7 @@ CONTAINS
    ! both sulphuric acid and organic with heteromolecular nucleation
    ! ---------------------------------------------------------------
 
-   SUBROUTINE SAORGnucl(     kbdim,        klev,          &
+   SUBROUTINE SAORGnucl(kproma,     kbdim,        klev,          &
                         pc_sa,      pc_org,                      &
                         pnuc_rate,  pd_crit,      ppbl,          &
                         pn_crit_sa, pn_crit_ocnv, pk_sa, pk_ocnv)
@@ -1481,6 +1495,7 @@ CONTAINS
 
      !-- Input variables -------------------
      INTEGER, INTENT(IN) :: &
+          kproma,  &     ! number of horiz. grid points
           kbdim,   &     ! dimension for arrays
           klev           ! number of vertical klev
 
@@ -1536,7 +1551,7 @@ CONTAINS
 
    FUNCTION zNnuc_tayl(d1,dx,zm_para,zjnuc_t,zeta,zGRtot) RESULT(zNnuc_taylor)
      IMPLICIT NONE
-     INTEGER :: i
+     INTEGER :: n, i, j
      REAL :: &
           d1, dx,zjnuc_t, zeta, &
           term1, term2, term3, term4, term5, &
