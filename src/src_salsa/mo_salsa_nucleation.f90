@@ -723,9 +723,8 @@ CONTAINS
     zpbl(:) = ppbl(:)
     if (lnuctropo) then
 
-
+   DO ii = 1,kbdim !  horizontal kbdim in the slab
       DO jj = 1,zpbl(ii) !  vertical grid
-          DO ii = 1,kbdim !  horizontal kbdim in the slab
              !-- 1) Checking that we are in the validity range of the parameterization -----------
 
              zt = max(ptemp(ii,jj), 190.15)
@@ -1204,8 +1203,8 @@ CONTAINS
 
      zpbl(:)=ppbl(:)
 
-    DO jj = zpbl(ii),klev !  vertical grid
-        DO ii = 1,kbdim !  horizontal kbdim in the slab
+     DO ii = 1,kbdim !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            !  gone through for boundary layer klev only!
            ! act_coeff 1e-7 by default, namelist controllable.
            pnuc_rate(ii,jj) = activ*psa_conc(ii,jj) ! [#/(m3 s)]
@@ -1266,8 +1265,8 @@ CONTAINS
      !-------------------------------------
      zpbl(:)=ppbl(:)
      ! loops over
-     DO jj = zpbl(ii),klev !  vertical grid
-         DO ii = 1,kbdim !  horizontal kbdim in the slab
+     DO ii = 1,kbdim !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = Aorg*pc_org(ii,jj)
            !          pnuc_rate(ii,jj) = Korg*pc_org(ii,jj)**2       ! homomolecular nuleation - which one?
 
@@ -1327,8 +1326,8 @@ CONTAINS
 
      !-------------------------------------
      zpbl(:)=ppbl(:)
-    DO jj = zpbl(ii),klev !  vertical grid
-        DO ii = 1,kbdim !  horizontal kbdim in the slab
+    DO ii = 1,kbdim !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = As1*pc_sa(ii,jj)+As2*pc_org(ii,jj) ![#/m3/s]
 
            !-- Both Organic compounds and H2SO4 are involved when SUMnucleation is assumed.
@@ -1387,8 +1386,8 @@ CONTAINS
 
      !-------------------------------------
      zpbl(:)=ppbl(:)
-     DO jj = zpbl(ii),klev !  vertical grid
-         DO ii = 1,kbdim         !  horizontal kbdim in the slab
+     DO ii = 1,kbdim         !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = zKhet*pc_sa(ii,jj)*pc_org(ii,jj)*1.E6 ![#/m3/s]
 
            !-- Both Organic compounds and H2SO4 are involved when
@@ -1448,8 +1447,8 @@ CONTAINS
 
      !-------------------------------------
      zpbl(:)=ppbl(:)
-    DO jj = zpbl(ii),klev !  vertical grid
-        DO ii = 1,kbdim !  horizontal kbdim in the slab
+     DO ii = 1,kbdim !  horizontal kbdim in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = (zKsa1*pc_sa(ii,jj)**2 + zKsa2*pc_sa(ii,jj)*pc_org(ii,jj))*1.E6 ![#/m3/s]
 
            !-- Both Organic compounds and H2SO4 are involved when SAnucleation is assumed.
@@ -1506,8 +1505,8 @@ CONTAINS
      REAL :: zKs1 = 0.92e-14, zKs2 = 7.0e-14, zKs3 = 0.098e-14 ![cm3/s] (Paasonen et al. Table 3.)
      !-------------------------------------
      zpbl(:)=ppbl(:)
-     DO jj = zpbl(ii),klev !  vertical grid
-        DO ii = 1,kbdim !  horizontal points in the slab
+     DO ii = 1,kbdim !  horizontal points in the slab
+        DO jj = zpbl(ii),klev !  vertical grid
            pnuc_rate(ii,jj) = (zKs1*pc_sa(ii,jj)**2 + &
                 zKs2*pc_sa(ii,jj)*pc_org(ii,jj)+ zKs3*pc_org(ii,jj)**2)*1.E6  ![#/m3/s]
 
