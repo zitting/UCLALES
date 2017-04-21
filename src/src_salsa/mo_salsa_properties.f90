@@ -69,7 +69,7 @@ CONTAINS
   ! Juha Tonttila (FMI) 2014
   !---------------------------------------------------------------------
 
-  SUBROUTINE equilibration(kproma, kbdim, klev,    &
+  SUBROUTINE equilibration(kbdim, klev,    &
                            prh, ptemp, paero, init )
 
     USE mo_submctl, ONLY : &
@@ -102,7 +102,6 @@ CONTAINS
 
     !-- input variables -------------
     INTEGER, INTENT(in) ::          &
-         kproma,                    & ! number of horiz. grid kproma 
          kbdim,                     & ! dimension for arrays 
          klev                         ! number of vertical levels 
 
@@ -349,8 +348,8 @@ CONTAINS
   !               - Not an equilibrium, but fixed droplet/ice diameter
   !               - Regimes 2a & 2b for ice and cloud droplets
   ! ----------------------------------------------------------------------------------------------------------------------
-  SUBROUTINE equilibration_cloud(kproma, kbdim, klev,    &
-                           prh, ptemp, pcloud, pice )
+  SUBROUTINE equilibration_cloud( kbdim, klev,    &
+                            pcloud, pice )
 
     USE mo_submctl, ONLY : &
          t_section,    &
@@ -364,13 +363,8 @@ CONTAINS
 
     !-- input variables -------------
     INTEGER, INTENT(in) ::          &
-         kproma,                    & ! number of horiz. grid kproma
          kbdim,                     & ! dimension for arrays
          klev                         ! number of vertical levels
-
-    REAL, INTENT(in) ::        &
-         prh(kbdim,klev),          & ! relative humidity [0-1]
-         ptemp(kbdim,klev)           ! temperature [K]
 
     !-- output variables -------------
     TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld), &

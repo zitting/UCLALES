@@ -175,19 +175,21 @@ module radiation
 
             if (present(ice).and.present(rr).and.present(grp)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
-                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde, prwc=prwc, pgwc=pgwc)
+                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde, pgwc=pgwc)
             ELSEif (present(ice).and.present(grp)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde, pgwc=pgwc)
             ELSEif (present(ice).and.present(rr)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
-                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde, prwc=prwc)
+                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde)
+
             ELSEif (present(ice)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde)
             ELSEif (present(rr)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
-                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, prwc=prwc)
+                     fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre)
+
             else
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre)
@@ -346,7 +348,7 @@ module radiation
     real, allocatable  :: sp(:), st(:), sh(:), so(:), sl(:)
 
     integer :: k, ind, ns, nb, nt
-    real    :: ptop, dp, ptmp, Tsurf
+    real    :: ptop, dp, Tsurf
 
     ! Read backgroud profiles (p [hPa], T [K], q [kg/kg], O3 [-] and an unused concentration)
     open ( unit = 08, file = background, status = 'old' )
