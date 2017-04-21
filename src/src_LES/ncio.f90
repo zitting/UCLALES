@@ -337,6 +337,7 @@ contains
     integer, save :: timeID=0, xtID=0, ytID=0
     integer, save :: dim_ttt(3)
     CHARACTER(LEN=7) nam
+
     integer :: iret, VarID, ss
 
     if (nRec == 0) then

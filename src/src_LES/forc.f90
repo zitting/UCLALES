@@ -46,6 +46,7 @@ contains
          , a_rv, a_rpp, a_npp, CCN, pi0, pi1, level, a_ut, a_up, a_vt, a_vp, &
          a_ncloudp, a_nprecpp, a_mprecpp, a_ri, a_nicep
 
+
     USE mo_submctl, ONLY : nspec,nprc,ira,fra
 
     use mpi_interface, only : myid, appl_abort
@@ -53,6 +54,7 @@ contains
     real, optional, intent (in) :: time_in, cntlat, sst
 
     real :: xka, fr0, fr1
+
     REAL :: znc(nzp,nxp,nyp), zrc(nzp,nxp,nyp), zni(nzp,nxp,nyp), zri(nzp,nxp,nyp)
 
     ! DIVERGENCE GIVEN FROM NAMELIST

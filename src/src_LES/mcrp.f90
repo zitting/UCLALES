@@ -84,6 +84,7 @@ contains
             sed_ice = .FALSE.; sed_snow = .FALSE.
        ENDIF
        nn = GetNcomp(prtcl)+1
+
        CALL sedim_SALSA(nzp,nxp,nyp,nn,dtlt, a_temp, a_theta,               &
                         a_Rawet,   a_Rcwet,   a_Rpwet,                       &
                         a_Riwet,   a_Rswet,                                  &

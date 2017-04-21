@@ -518,6 +518,7 @@ contains
          , vmean, dn0, precip, a_rpp, a_npp, CCN, iradtyp, a_rflx               &
          , a_sflx, albedo, a_srp, a_snrp, a_ncloudp, xt, yt
 
+
     real, intent (in) :: time
 
     real :: rxt(nzp,nxp,nyp), rnt(nzp,nxp,nyp)
@@ -550,6 +551,7 @@ contains
     if (level >=1) call accum_lvl1(nzp, nxp, nyp, rxt)
     if (level >=2) call accum_lvl2(nzp, nxp, nyp, th00, dn0, zm, a_wp,        &
                                    a_theta, a_tp, a_rc, a_rsl, rxt   )
+
     if (level >=3) call accum_lvl3(nzp, nxp, nyp, dn0, zm, xrpp,  &
                                    xnpp, precip, CCN                    )
     if (level >=4)  call accum_lvl4(nzp, nxp, nyp)
@@ -604,7 +606,9 @@ contains
             xrpp = a_srp
             xnpp = a_snrp
         ENDIF
+
         CALL set_cs_warm(nzp,nxp,nyp,rxt,rnt,xrpp,a_theta,dn0,zm,zt,dzm,xt,yt,time)
+
     ENDIF
 
   end subroutine statistics
@@ -693,7 +697,9 @@ contains
 
     INTEGER, INTENT(in) :: n2,n3
 
+
     INTEGER :: si, i
+
     CHARACTER(LEN=3) :: nam
 
     IF (.NOT.csflg) RETURN
@@ -734,6 +740,7 @@ contains
   END SUBROUTINE cs_rem_save
   !
   ! Calculate warm cloud statistics
+
   subroutine set_cs_warm(n1,n2,n3,rc,nc,rp,th,dn0,zm,zt,dzm,xt,yt,time)
 
     use netcdf
@@ -741,12 +748,15 @@ contains
 
     integer, intent(in) :: n1,n2,n3
     real, intent(in)    :: rc(n1,n2,n3),nc(n1,n2,n3),rp(n1,n2,n3),th(n1,n2,n3)
+
     real, intent(in)    :: dn0(n1),zm(n1),zt(n1),dzm(n1),xt(n2),yt(n3),time
     REAL :: lwp(n2,n3), ncld(n2,n3), rwp(n2,n3), nrain(n2,n3), zb(n2,n3), zc(n2,n3), &
                 th1(n2,n3), lmax(n2,n3)
     INTEGER :: ncloudy(n2,n3), nrainy(n2,n3)
     integer :: i, j, k
+
     real    :: cld, rn, sval, dmy
+
 
     ! No outputs for level 1
     IF (level<2) RETURN
@@ -1341,7 +1351,6 @@ contains
     LOGICAL :: cloudmask(n1,n2,n3)
     LOGICAL :: drizzmask(n1,n2,n3)
 
-
     REAL, DIMENSION(n1,n2,n3)           :: a1,a12
     REAL, DIMENSION(n1,5)               :: a2
     REAL, DIMENSION(n1,fn2a)            :: a3_a
@@ -1518,6 +1527,7 @@ contains
     integer, intent (in) :: n1,n2,n3
     real, intent (in)    :: dzm(n1),th00,u(n1,n2,n3),v(n1,n2,n3),w(n1,n2,n3)
     real, intent (inout) :: s(n1,n2,n3)
+
 
     integer :: k,kp1
     real    :: x1(n1), x2(n1)

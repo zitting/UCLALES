@@ -221,7 +221,9 @@ contains
     real, intent (out) :: ti(nv), wi(nv), wwi(nv,4)
 
     integer :: ibr,k
+
     real    :: gg, cwmks
+
     real    :: fw1, fw2, fw3, wf1, wf2, wf3, wf4, x1, x2, x3, x4,  fd
 
     if (.not.iceInitialized) stop 'TERMINATING: Ice not Initialized'
@@ -300,7 +302,9 @@ contains
 
     integer :: i
     real    :: cwmks
+
     real    :: y1, y2, y3, y4, x1, x2, x3, x4
+
     if (.not.grpInitialized) stop 'TERMINATING: Ice not Initialized'
 
     x1 = gg(ib)

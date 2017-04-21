@@ -112,6 +112,7 @@ contains
          fdir, fuir   ! downward and upward ir flux
 
     call rad_ir(pts, ee, pp, pt, ph, po, fdir, fuir, McICA, &
+
                  plwc, pre, piwc, pde, pgwc )
     call rad_vis(as, u0, ss, pp, pt, ph, po, fds, fus, McICA, &
                  plwc, pre, piwc, pde, pgwc )
@@ -124,7 +125,7 @@ contains
   ! defined by input ckd file
   !
   subroutine rad_ir (pts, ee, pp, pt, ph, po, fdir, fuir, McICA, &
-       plwc, pre, piwc, pde, pgwc )
+  plwc, pre, piwc, pde, pgwc )
 
     real, intent (in)  :: pp (nv1) ! pressure at interfaces
 

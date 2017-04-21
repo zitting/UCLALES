@@ -217,7 +217,7 @@ end subroutine tstep_reset
     USE util, ONLY : maskactiv !Juha: Included for SALSA
 
     USE mo_salsa_driver, ONLY : run_SALSA
-    USE mo_submctl, ONLY : nbins
+    USE mo_submctl, ONLY : nbins, ncld
     USE class_ComponentIndex, ONLY : GetNcomp
 
     logical, intent (out) :: cflflg
@@ -343,6 +343,7 @@ end subroutine tstep_reset
     IF (level >= 4)  CALL maskactiv(zactmask,nxp,nyp,nzp,nbins,2,prtcl,a_rh,              &
                                     rc = a_rc,pa_naerop = a_naerop, pa_maerop = a_maerop, &
                                     pt = a_temp, Rpwet=a_Rawet, w=a_wp)
+
     ! Get tendencies from cloud base activation
     IF (level >= 4) CALL newdroplet(zactmask)
 

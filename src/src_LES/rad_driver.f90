@@ -182,12 +182,14 @@ module radiation
             ELSEif (present(ice).and.present(rr)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde)
+
             ELSEif (present(ice)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre, piwc=piwc, pde=pde)
             ELSEif (present(rr)) then
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre)
+
             else
                 call rad( sfc_albedo, u0, SolarConstant, sknt, ee, pp, pt, ph, po,&
                      fds, fus, fdir, fuir, McICA, plwc=plwc, pre=pre)
