@@ -52,7 +52,7 @@ contains
   ! defined by input ckd file
   !
   subroutine rad (as, u0, ss, pts, ee, pp, pt, ph, po, fds, fus, fdir, fuir, &
-       McICA, plwc, pre, piwc, pde, prwc, pgwc )
+       McICA, plwc, pre )
 
     real, intent (in)  :: pp (nv1) ! pressure at interfaces
 
@@ -63,11 +63,7 @@ contains
 
     real, optional, dimension(nv), intent (in)  :: &
          plwc, & ! cloud liquid water content [g/m^3]
-         pre,  & ! effective radius of cloud droplets [microns]
-         piwc, & ! cloud ice water content [g/m^3]
-         pde,  & ! effective diameter of ice particles [microns]
-         prwc, & ! rain water content [g/m^3]
-         pgwc    ! graupel water content
+         pre ! effective radius of cloud droplets [microns]
 
     real, intent (in) :: &
          as, & ! broadband albedo (all visible bands given this value)
@@ -83,9 +79,9 @@ contains
          fdir, fuir   ! downward and upward ir flux
 
     call rad_ir(pts, ee, pp, pt, ph, po, fdir, fuir, &
-                 plwc, pre, piwc, pde, prwc, pgwc, McICA  )
+                 plwc, pre, McICA  )
     call rad_vis(as, u0, ss, pp, pt, ph, po, fds, fus,  &
-                 plwc, pre, piwc, pde, prwc, pgwc, McICA  )
+                 plwc, pre, McICA  )
 
   end subroutine rad
 
@@ -95,7 +91,7 @@ contains
   ! defined by input ckd file
   !
   subroutine rad_ir (pts, ee, pp, pt, ph, po, fdir, fuir, &
-       plwc, pre, piwc, pde, prwc, pgwc, McICA )
+       plwc, pre, McICA )
 
     real, intent (in)  :: pp (nv1) ! pressure at interfaces
 
@@ -106,11 +102,7 @@ contains
 
     real, optional, dimension(nv), intent (in)  :: &
          plwc, & ! cloud liquid water content [g/m^3]
-         pre,  & ! effective radius of cloud droplets [microns]
-         piwc, & ! cloud ice water content [g/m^3]
-         pde,  & ! effective diameter of ice particles [microns]
-         prwc, & ! rain water content [g/m^3]
-         pgwc    ! graupel water content
+         pre
 
     real, intent (in) :: &
          ee, & ! broadband surface emissivity (all IR bands given this value)
@@ -216,7 +208,7 @@ contains
   !
 
   subroutine rad_vis (as, u0, ss, pp, pt, ph, po, fds, fus,  &
-       plwc, pre, piwc, pde, prwc, pgwc, McICA )
+       plwc, pre, McICA )
 
     real, intent (in)  :: pp (nv1) ! pressure at interfaces
 
@@ -227,11 +219,7 @@ contains
 
     real, optional, dimension(nv), intent (in)  :: &
          plwc, & ! cloud liquid water content [g/m^3]
-         pre,  & ! effective radius of cloud droplets [microns]
-         piwc, & ! cloud ice water content [g/m^3]
-         pde,  & ! effective diameter of ice particles [microns]
-         prwc, & ! rain water content [g/m^3]
-         pgwc    ! graupel water content
+         pre     ! effective radius of cloud droplets [microns]
 
     real, intent (in) :: &
          as, & ! broadband albedo (all visible bands given this value)

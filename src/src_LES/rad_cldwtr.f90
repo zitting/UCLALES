@@ -28,7 +28,7 @@ module cldwtr
 contains
   !
   !---------------------------------------------------------------------------
-  ! Surbourine cloud_init initialize data arrays for the cloud model, 
+  ! Subroutine cloud_init initialize data arrays for the cloud model,
   ! checking for consistency between band structure of cloud model and CKD
   !
   subroutine init_cldwtr

@@ -84,7 +84,7 @@ contains
             sed_ice = .FALSE.; sed_snow = .FALSE.
        ENDIF
        nn = GetNcomp(prtcl)+1
-       CALL sedim_SALSA(nzp,nxp,nyp,nn, level,dtlt, a_scr1, a_theta,               &
+       CALL sedim_SALSA(nzp,nxp,nyp,nn,dtlt, a_scr1, a_theta,               &
                         a_Rawet,   a_Rcwet,   a_Rpwet,                       &
                         a_Riwet,   a_Rswet,                                  &
                         a_naerop,  a_naerot,  a_maerop,  a_maerot,           &
@@ -512,7 +512,7 @@ contains
   !
   ! Jaakko: Modified for the use of ice and snow bins
 
-  SUBROUTINE sedim_SALSA(n1,n2,n3,n4,level,tstep,tk,th,          &
+  SUBROUTINE sedim_SALSA(n1,n2,n3,n4,tstep,tk,th,          &
                          Rawet, Rcwet, Rpwet,              &
                          Riwet, Rswet,                     &
                          naerop, naerot, maerop, maerot,   &
@@ -530,7 +530,6 @@ contains
     IMPLICIT NONE
 
     INTEGER, INTENT(in) :: n1,n2,n3,n4
-    INTEGER, INTENT(in) :: level 
     REAL, INTENT(in) :: tstep,                    &
                         tk(n1,n2,n3),             &
                         th(n1,n2,n3),             &
@@ -827,9 +826,9 @@ contains
           DO k=n1-1,2,-1
              kp1 = k+1
 
-             ! atm modelling Eq.4.54
+             ! Fundamentals of atmospheric modeling Eq.4.54
              avis=1.8325e-5*(416.16/(tk(k,i,j)+120.0))*(tk(k,i,j)/296.16)**1.5
-             kvis =  avis/adn(k,i,j) !actual density ???
+             kvis =  avis/adn(k,i,j)
              va = sqrt(8*kb*tk(k,i,j)/(pi*M)) ! thermal speed of air molecule
              lambda = 2*avis/(adn(k,i,j)*va) !mean free path
 
@@ -878,7 +877,7 @@ contains
     REAL, INTENT(in) :: numc(n1,n2,n3,nn)    ! Particle number concentration
     REAL, INTENT(in) :: mass(n1,n2,n3,nn*n4) ! Particle mass mixing ratio
     REAL, INTENT(in) :: dzt(n1)              ! Inverse of grid level thickness
-    REAL, INTENT(IN) :: clim                ! Concentration limit
+    REAL, INTENT(IN) :: clim                 ! Concentration limit
 
     INTEGER :: i,j,k,kp1
     INTEGER :: bin,ss,bs
@@ -912,9 +911,9 @@ contains
           DO k=n1-1,2,-1
              kp1 = k+1
 
-             ! atm modelling Eq.4.54
+             ! Fundamentals of atmospheric modeling Eq.4.54
              avis=1.8325e-5*(416.16/(tk(k,i,j)+120.0))*(tk(k,i,j)/296.16)**1.5
-             kvis =  avis/adn(k,i,j) !actual density ???
+             kvis =  avis/adn(k,i,j)
              va = sqrt(8*kb*tk(k,i,j)/(pi*M)) ! thermal speed of air molecule
              lambda = 2*avis/(adn(k,i,j)*va) !mean free path
 
@@ -1006,9 +1005,9 @@ contains
 
        DO i = 3,n2-2
 
-          ! atm modelling Eq.4.54
+          ! Fundamentals of atmospheric modeling Eq.4.54
           avis=1.8325e-5*(416.16/(tk(k,i,j)+120.0))*(tk(k,i,j)/296.16)**1.5
-          kvis = avis/adn(k,i,j) !actual density ???
+          kvis = avis/adn(k,i,j)
           va = sqrt(8.*kb*tk(k,i,j)/(pi*M)) ! thermal speed of air molecule
           lambda = 2.*avis/(adn(k,i,j)*va) !mean free path
 
@@ -1099,9 +1098,9 @@ contains
 
        DO i = 3,n2-2
 
-          ! atm modelling Eq.4.54
+          ! Fundamentals of atmospheric modeling Eq.4.54
           avis=1.8325e-5*(416.16/(tk(k,i,j)+120.0))*(tk(k,i,j)/296.16)**1.5
-          kvis = avis/adn(k,i,j) !actual density ???
+          kvis = avis/adn(k,i,j)
           va = sqrt(8*kb*tk(k,i,j)/(pi*M)) ! thermal speed of air molecule
           lambda = 2*avis/(adn(k,i,j)*va) !mean free path
 
@@ -1207,9 +1206,9 @@ contains
           
           DO k=n1-1,2,-1
           
-             ! atm modelling Eq.4.54
+             ! Fundamentals of atmospheric modeling
              avis = 1.8325e-5*(416.16/(tk(k,i,j)+120.0))*(tk(k,i,j)/296.16)**1.5
-             kvis = avis/adn(k,i,j) !actual density ???
+             kvis = avis/adn(k,i,j)
              va = sqrt(8.*kb*tk(k,i,j)/(pi*M)) ! thermal speed of air molecule
              lambda = 2.*avis/(adn(k,i,j)*va) !mean free path
           

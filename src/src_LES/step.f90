@@ -222,7 +222,6 @@ end subroutine tstep_reset
     REAL :: zwp(nzp,nxp,nyp), &  !! FOR SINGLE-COLUMN RUNS
             ztkt(nzp,nxp,nyp)
     INTEGER :: zrm
-    LOGICAL :: dbg2
 
     INTEGER :: n4
 
@@ -290,7 +289,7 @@ end subroutine tstep_reset
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  zrm, prtcl, dtlt, dbg2, time, level  )
+                  zrm, prtcl, dtlt, level  )
           ELSE
              !! for 2D or 3D runs
              CALL run_SALSA(nxp,nyp,nzp,n4,a_press,a_scr1,ztkt,a_rp,a_rt,a_scr2,a_rsi,a_wp,a_dn,  &
@@ -304,7 +303,7 @@ end subroutine tstep_reset
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  zrm, prtcl, dtlt, dbg2, time, level  )
+                  zrm, prtcl, dtlt, level  )
              
           END IF !nxp==5 and nyp == 5
           
@@ -337,8 +336,7 @@ end subroutine tstep_reset
     ! Mask for cloud base activation
     IF (level >= 4)  CALL maskactiv(zactmask,nxp,nyp,nzp,nbins,2,prtcl,a_rh,              &
                                     rc = a_rc,pa_naerop = a_naerop, pa_maerop = a_maerop, &
-                                    pt = a_scr1, Rpwet=a_Rawet, w=a_wp, &
-                                    pa_ncloud= a_ncloudp(:,:,:,:) )
+                                    pt = a_scr1, Rpwet=a_Rawet, w=a_wp)
     ! Get tendencies from cloud base activation
     IF (level >= 4) CALL newdroplet(zactmask)
 
@@ -624,7 +622,7 @@ end subroutine tstep_reset
   end subroutine buoyancy
   !
   ! ----------------------------------------------------------------------
-  ! subroutine boyanc:
+  ! subroutine buoyancy:
   !
   subroutine boyanc(n1,n2,n3,level,wt,th,rt,th00,scr,rx)
 

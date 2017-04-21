@@ -506,7 +506,7 @@ contains
     if (level >=1) call accum_lvl1(nzp, nxp, nyp, rxt)
     if (level >=2) call accum_lvl2(nzp, nxp, nyp, th00, dn0, zm, a_wp,        &
                                    a_theta, a_tp, a_rc, a_scr2, rxt   )
-    if (level >=3) call accum_lvl3(nzp, nxp, nyp, dn0, zm, a_rc, xrpp,  &
+    if (level >=3) call accum_lvl3(nzp, nxp, nyp, dn0, zm, xrpp,  &
                                    xnpp, precip, CCN                    )
     if (level >=4)  call accum_lvl4(nzp, nxp, nyp)
      !for Salsa output in ps files .. by Zubair Maalick
@@ -880,14 +880,14 @@ contains
   ! SUBROUTINE ACCUM_LVL3: Accumulates specialized statistics that depend
   ! on level 3 variables.
   !
-  subroutine accum_lvl3(n1, n2, n3, dn0, zm, rc, rr, nr, rrate, CCN)
+  subroutine accum_lvl3(n1, n2, n3, dn0, zm, rr, nr, rrate, CCN)
 
     use defs, only : alvl
 
     integer, intent (in) :: n1,n2,n3
     real, intent (in)                      :: CCN
     real, intent (in), dimension(n1)       :: zm, dn0
-    real, intent (in), dimension(n1,n2,n3) :: rc, rr, nr, rrate
+    real, intent (in), dimension(n1,n2,n3) :: rr, nr, rrate
 
     integer                :: k, i, j, km1
     real                   :: nrsum, nrcnt, rrsum, rrcnt, xrain

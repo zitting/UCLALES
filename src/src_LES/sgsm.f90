@@ -109,7 +109,7 @@ contains
     call fll_tkrs(nzp,nxp,nyp,a_theta,a_pexnr,pi0,pi1,dn0,th00,a_scr1,        &
          rs=a_scr2)
 
-    ! Tartteeks täs olla iffiä?
+    ! Is if required?
     if (level > 1) then
        call bruvais(nzp,nxp,nyp,level,a_theta,a_tp,rxt,a_scr2,a_scr3,dzm   &
             ,th00) ! Juha: rxt OK
@@ -332,7 +332,7 @@ contains
           tke_sgs(k) = sz1(k)/(delta*pi*(csx*0.18))**2
           sz1(k) = 1./sqrt(1./(delta*csx)**2+1./(zm(k)*vonk+0.001)**2)
        end do
-       call updtst(n1,'sgs',-1,tke_sgs,1) ! sgs tke
+       call updtst(n1,'sgs',-1,tke_sgs,1)  ! sgs tke
        call updtst(n1,'sgs',-5,sz1,1)      ! mixing length
        call updtst(n1,'sgs',-6,sz1,1)      ! dissipation lengthscale
     end if
