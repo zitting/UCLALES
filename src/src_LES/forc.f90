@@ -44,7 +44,8 @@ contains
     use grid, only: nxp, nyp, nzp, zm, zt, dzt, dzm, dn0, iradtyp, a_rc     &
          , a_rflx, a_sflx, albedo, a_tt, a_tp, a_rt, a_rp, a_pexnr, a_temp  &
          , a_rv, a_rpp, a_npp, CCN, pi0, pi1, level, a_ut, a_up, a_vt, a_vp, &
-         a_ncloudp, a_nprecpp, a_mprecpp, a_ri, a_nicep, a_nsnowp
+         a_ncloudp, a_nprecpp, a_mprecpp, a_ri, a_nicep
+
 
     USE mo_submctl, ONLY : nspec,nprc,ira,fra
 
@@ -52,7 +53,8 @@ contains
 
     real, optional, intent (in) :: time_in, cntlat, sst
 
-    real :: xka, fr0, fr1, xref1, xref2
+    real :: xka, fr0, fr1
+
     REAL :: znc(nzp,nxp,nyp), zrc(nzp,nxp,nyp), zni(nzp,nxp,nyp), zri(nzp,nxp,nyp)
 
     ! DIVERGENCE GIVEN FROM NAMELIST

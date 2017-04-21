@@ -229,7 +229,6 @@ end subroutine tstep_reset
     REAL :: zwp(nzp,nxp,nyp), &  !! FOR SINGLE-COLUMN RUNS
             ztkt(nzp,nxp,nyp)
     INTEGER :: zrm
-    LOGICAL :: dbg2
 
     INTEGER :: n4
 
@@ -297,7 +296,7 @@ end subroutine tstep_reset
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  zrm, prtcl, dtlt, dbg2, time, level  )
+                  zrm, prtcl, dtlt, level  )
           ELSE
              !! for 2D or 3D runs
              CALL run_SALSA(nxp,nyp,nzp,n4,a_press,a_temp,ztkt,a_rp,a_rt,a_rsl,a_rsi,a_wp,a_dn,  &
@@ -311,7 +310,7 @@ end subroutine tstep_reset
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  zrm, prtcl, dtlt, dbg2, time, level  )
+                  zrm, prtcl, dtlt, level  )
              
           END IF !nxp==5 and nyp == 5
           
@@ -343,8 +342,8 @@ end subroutine tstep_reset
     ! Mask for cloud base activation
     IF (level >= 4)  CALL maskactiv(zactmask,nxp,nyp,nzp,nbins,2,prtcl,a_rh,              &
                                     rc = a_rc,pa_naerop = a_naerop, pa_maerop = a_maerop, &
-                                    pt = a_temp, Rpwet=a_Rawet, w=a_wp, &
-                                    pa_ncloud= a_ncloudp(:,:,:,:) )
+                                    pt = a_temp, Rpwet=a_Rawet, w=a_wp)
+
     ! Get tendencies from cloud base activation
     IF (level >= 4) CALL newdroplet(zactmask)
 
@@ -411,7 +410,7 @@ end subroutine tstep_reset
     use grid, only : level, dtlt, nxp, nyp, nzp, &
                 zt, a_rp, a_rt, a_rpp, a_rc, a_srp, a_ri, a_srs, &
                 a_naerop, a_naerot, a_ncloudp, a_nicep, &
-                a_tp, a_tt, th0, th00, a_up, a_ut, a_vp, a_vt
+                a_tp, a_tt, a_up, a_ut, a_vp, a_vt
     USE mo_submctl, ONLY : nbins, ncld, nice, in2a, fn2b
 
     IMPLICIT NONE

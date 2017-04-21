@@ -95,7 +95,7 @@ contains
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  1, prtcl, dtlt, .false., 0., level   )
+                  1, prtcl, dtlt, level   )
           ELSE
              CALL run_SALSA(nxp,nyp,nzp,n4,a_press,a_temp,ztkt,a_rp,a_rt,a_rsl,a_rsi,a_wp,a_dn, &
                   a_naerop,  a_naerot,  a_maerop,  a_maerot,   &
@@ -108,7 +108,7 @@ contains
                   a_Ridry,   a_Rsdry,                          &
                   a_Rawet,   a_Rcwet,   a_Rpwet,               &
                   a_Riwet,   a_Rswet,                          &
-                  1, prtcl, dtlt, .false., 0., level   )
+                  1, prtcl, dtlt, level   )
 
           END IF
           CALL SALSAInit
@@ -1031,7 +1031,7 @@ contains
        ! Convert to SI
        n = n*1.e6
        dpg = dpg*1.e-6
-       CALL size_distribution(1,1,1, n, dpg, sigmag, nsect)
+       CALL size_distribution(1,1, n, dpg, sigmag, nsect)
        DO ss = 1,nbins
           pndist(:,ss) = nsect(1,1,ss)
        END DO
@@ -1423,7 +1423,7 @@ END SUBROUTINE liq_ice_init
     ! Get the binned size distribution
     znsect = 0.
     DO k = 1,nc_levs
-       CALL size_distribution(1,1,1,zn(k,:),zdpg(k,:),zsigmag(k,:),nsect)
+       CALL size_distribution(1,1,zn(k,:),zdpg(k,:),zsigmag(k,:),nsect)
        znsect(k,:) = nsect(1,1,:)
     END DO
 

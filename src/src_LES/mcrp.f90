@@ -84,7 +84,8 @@ contains
             sed_ice = .FALSE.; sed_snow = .FALSE.
        ENDIF
        nn = GetNcomp(prtcl)+1
-       CALL sedim_SALSA(nzp,nxp,nyp,nn, level,dtlt, a_temp, a_theta,               &
+
+       CALL sedim_SALSA(nzp,nxp,nyp,nn,dtlt, a_temp, a_theta,               &
                         a_Rawet,   a_Rcwet,   a_Rpwet,                       &
                         a_Riwet,   a_Rswet,                                  &
                         a_naerop,  a_naerot,  a_maerop,  a_maerot,           &
@@ -512,7 +513,7 @@ contains
   !
   ! Jaakko: Modified for the use of ice and snow bins
 
-  SUBROUTINE sedim_SALSA(n1,n2,n3,n4,level,tstep,tk,th,          &
+  SUBROUTINE sedim_SALSA(n1,n2,n3,n4,tstep,tk,th,          &
                          Rawet, Rcwet, Rpwet,              &
                          Riwet, Rswet,                     &
                          naerop, naerot, maerop, maerot,   &
@@ -530,7 +531,6 @@ contains
     IMPLICIT NONE
 
     INTEGER, INTENT(in) :: n1,n2,n3,n4
-    INTEGER, INTENT(in) :: level 
     REAL, INTENT(in) :: tstep,                    &
                         tk(n1,n2,n3),             &
                         th(n1,n2,n3),             &

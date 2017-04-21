@@ -312,8 +312,8 @@ contains
 
         !       write(*,*) ww_sfc(3,10),a_ustar(3,10),'sflx'
 
-           sst1 = sst1-(total_rw+total_la+total_se+((lambda*C_heat*7.27d-5/(2.0))**0.5*(SST1-280.0)))&
-                /(2.0e-2*C_heat+(lambda*C_heat/(2.0*7.27d-5))**0.5)*dtl
+           sst1 = sst1-(total_rw+total_la+total_se+((lambda*C_heat*7.27e-5/(2.0))**0.5*(SST1-280.0)))&
+                /(2.0e-2*C_heat+(lambda*C_heat/(2.0*7.27e-5))**0.5)*dtl
 
            sst = sst1
     !

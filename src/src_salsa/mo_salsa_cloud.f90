@@ -22,7 +22,7 @@ MODULE mo_salsa_cloud
 
 CONTAINS
 
-  SUBROUTINE cloud_activation(kproma, kbdim, klev,   &
+  SUBROUTINE cloud_activation(kbdim, klev,   &
                               temp,   pres,  rv,     &
                               rs,     w,     paero,  &
                               pcloud, pactd          )
@@ -34,7 +34,6 @@ CONTAINS
 
     !-- Input and output variables ----------
     INTEGER, INTENT(IN) ::              &
-             kproma,                    & ! number of horiz. grid points
              kbdim,                     & ! dimension for arrays
              klev                       ! number of vertical levels
 
@@ -70,7 +69,7 @@ CONTAINS
     ! -------------------------------------
     IF ( lsactintst ) THEN
 
-       CALL actInterst(kproma,kbdim,klev,paero,pcloud,rv,rs,temp)
+       CALL actInterst(kbdim,klev,paero,pcloud,rv,rs,temp)
 
     END IF
 
@@ -79,7 +78,7 @@ CONTAINS
     ! -----------------------------------
     IF ( lsactbase ) THEN
 
-        CALL ActCloudBase(kproma,kbdim,klev,paero,pcloud,pres,temp,w,pactd)
+        CALL ActCloudBase(kbdim,klev,paero,pres,temp,w,pactd)
 
     END IF
 
@@ -89,7 +88,7 @@ CONTAINS
 ! -----------------------------------------------------------------
 ! Calculates the number of moles of dissolved solutes in one particle
 !
-  SUBROUTINE getSolute(kproma,kbdim,klev,paero,pns)
+  SUBROUTINE getSolute(kbdim,klev,paero,pns)
     USE mo_submctl, ONLY : t_section,nlim,       &
                                fn2b,            &
                                rhosu, rhooc, rhobc,  &
@@ -100,7 +99,7 @@ CONTAINS
                                mss
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: kproma,kbdim,klev
+    INTEGER, INTENT(IN) :: kbdim,klev
     TYPE(t_section), INTENT(IN) :: paero(kbdim,klev,fn2b)
     REAL, INTENT(OUT) :: pns(kbdim,klev,fn2b)
 
@@ -141,7 +140,7 @@ CONTAINS
 
 ! -----------------------------------------------------------------
 
-  SUBROUTINE ActCloudBase(kproma,kbdim,klev,paero,pcloud,pres,temp,w,pactd)
+  SUBROUTINE ActCloudBase(kbdim,klev,paero,pres,temp,w,pactd)
     ! Cloud base activation following:
     !
     ! Abdul-Razzak et al: "A parameterization of aerosol activation -
@@ -175,7 +174,6 @@ CONTAINS
 
     !-- Input and output variables ----------
     INTEGER, INTENT(IN) ::              &
-             kproma,                    & ! number of horiz. grid points
              kbdim,                     & ! dimension for arrays
              klev                       ! number of vertical levels
 
@@ -184,8 +182,7 @@ CONTAINS
              temp(kbdim,klev),          &
              w(kbdim,klev)
 
-    TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld),  &
-                                      paero(kbdim,klev,fn2b)
+    TYPE(t_section), INTENT(inout) :: paero(kbdim,klev,fn2b)
 
     ! Properties of newly activate particles
     TYPE(t_section), INTENT(out) :: pactd(kbdim,klev,ncld)
@@ -243,7 +240,7 @@ CONTAINS
     bcritb(:,:) = fn2b
 
     ! Get moles of solute at the middle of the bin
-    CALL getSolute(kproma,kbdim,klev,paero,ns)
+    CALL getSolute(kbdim,klev,paero,ns)
 
     ! ----------------------------------------------------------------
 
@@ -366,13 +363,13 @@ CONTAINS
 
        END DO ! jj
 
-       CALL activate3(kproma,kbdim,klev,paero,bcrita,bcritb,  &
+       CALL activate3(kbdim,klev,paero,bcrita,  &
                       zdcrit, zdcrlo, zdcrhi, zdcstar, pactd  )
 
   END SUBROUTINE ActCloudBase
 
 
-  SUBROUTINE actInterst(kproma,kbdim,klev,paero,pcloud,prv,prs,temp)
+  SUBROUTINE actInterst(kbdim,klev,paero,pcloud,prv,prs,temp)
     !
     ! Activate interstitial aerosols if they've reached their critical size
     !
@@ -395,7 +392,7 @@ CONTAINS
          nbins,ncld
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: kproma,kbdim,klev
+    INTEGER, INTENT(IN) :: kbdim,klev
     TYPE(t_section), INTENT(INOUT) :: paero(kbdim,klev,nbins),  &
                                       pcloud(kbdim,klev,ncld)
     REAL, INTENT(IN) :: prv(kbdim,klev),prs(kbdim,klev)  ! Water vapour and saturation mixin ratios
@@ -635,7 +632,7 @@ CONTAINS
 
   ! ----------------------------------------------
 
-  SUBROUTINE activate3(kproma,kbdim,klev,paero,pbcrita,pbcritb, &
+  SUBROUTINE activate3(kbdim,klev,paero,pbcrita, &
                        pdcrit, pdcrlo, pdcrhi, pdcstar, pactd   )
     !
     ! Gets the number and mass activated in the critical aerosol size bin
@@ -644,10 +641,10 @@ CONTAINS
                                in1a,fn2a, ica, fca, icb, fcb, in2b, fn2b
     IMPLICIT NONE
 
-    INTEGER, INTENT(IN) :: kproma,kbdim,klev
+    INTEGER, INTENT(IN) :: kbdim,klev
     TYPE(t_section), INTENT(IN) :: paero(kbdim,klev,fn2b)
-    INTEGER, INTENT(IN) :: pbcrita(kbdim,klev),         & ! Index of the critical aerosol bin in regime a
-                           pbcritb(kbdim,klev)            ! Index of the critical aerosol bin in regime b
+    INTEGER, INTENT(IN) :: pbcrita(kbdim,klev)          ! Index of the critical aerosol bin in regime a
+
     REAL, INTENT(IN) :: pdcrit(kbdim,klev,fn2b),    & ! Bin middle critical diameter
                             pdcrlo(kbdim,klev,fn2b),    & ! Critical diameter at low limit
                             pdcrhi(kbdim,klev,fn2b)       ! Critical diameter at high limit
@@ -833,7 +830,7 @@ CONTAINS
 
 
   !-----------------------------------------
-  SUBROUTINE autoconv2(kproma,kbdim,klev,   &
+  SUBROUTINE autoconv2(kbdim,klev,   &
                       pcloud,pprecp         )
   !
   ! Uses a more straightforward method for converting cloud droplets to drizzle.
@@ -849,7 +846,7 @@ CONTAINS
                                nlim, prlim
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kproma,kbdim,klev
+    INTEGER, INTENT(in) :: kbdim,klev
     TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld)
     TYPE(t_section), INTENT(inout) :: pprecp(kbdim,klev,nprc)
 
@@ -912,8 +909,8 @@ CONTAINS
   !
   !***********************************************
 
-  SUBROUTINE ice_het_nucl(kproma,kbdim,klev,   &
-                      pcloud,pice,paero,ppres, &
+  SUBROUTINE ice_het_nucl(kbdim,klev,   &
+                      pcloud,pice,paero, &
                       ptemp,prv,prs,ptstep )
 
     
@@ -930,10 +927,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kbdim,kproma,klev
+    INTEGER, INTENT(in) :: kbdim,klev
     REAL, INTENT(in) :: ptstep
-    REAL, INTENT(in) :: ppres(kbdim,klev),  &
-                            ptemp(kbdim,klev),  &
+    REAL, INTENT(in) :: ptemp(kbdim,klev),  &
                             prv(kbdim,klev),    &
                             prs(kbdim,klev)
 
@@ -958,7 +954,7 @@ CONTAINS
               rdry = (3.*sum(pcloud(ii,jj,kk)%volc) /pcloud(ii,jj,kk)%numc/4./pi)**(1./3.)
               qv = (1.-sum( pcloud(ii,jj,kk)%volc(3:4) ))/(1. - sum(pcloud(ii,jj,kk)%volc(1:7))) ! Not correct?
               rn = rdry*(1.-qv)**(1./3.)  ! Not correct?
-              jcf = calc_JCF( rn,ptemp(ii,jj), ppres(ii,jj), prv(ii,jj), prs(ii,jj) )
+              jcf = calc_JCF( rn,ptemp(ii,jj), prv(ii,jj), prs(ii,jj) )
               phf = 1. - exp( -jcf*ptstep )
               Ntot = pcloud(ii,jj,kk)%numc
               Vtot = SUM(pcloud(ii,jj,kk)%volc(:))
@@ -985,7 +981,7 @@ CONTAINS
               rdry = (3.*sum(paero(ii,jj,kk)%volc) /paero(ii,jj,kk)%numc/4./pi)**(1./3.)
               qv = (1.-sum( paero(ii,jj,kk)%volc(3:4) ))/(1. - sum(paero(ii,jj,kk)%volc(1:7))) ! Not correct?
               rn = rdry*(1.-qv)**(1./3.)  ! Not correct?
-              jcf = calc_JCF( rn,ptemp(ii,jj), ppres(ii,jj), prv(ii,jj), prs(ii,jj) )
+              jcf = calc_JCF( rn,ptemp(ii,jj), prv(ii,jj), prs(ii,jj) )
               phf = 1. - exp( -jcf*ptstep )
               Ntot = paero(ii,jj,kk)%numc
               Vtot = SUM(paero(ii,jj,kk)%volc(:))
@@ -1013,9 +1009,9 @@ CONTAINS
   ! as of referenced as [Mor05]
   !
   !***********************************************
-  SUBROUTINE ice_hom_nucl(kproma,kbdim,klev,   &
-                      pcloud,pice,paero,ppres, &
-                      ptemp,prv,prs,ptstep ) 
+  SUBROUTINE ice_hom_nucl(kbdim,klev,   &
+                      pcloud,pice,paero, &
+                      ptemp,ptstep )
 
     USE mo_submctl, ONLY : t_section,   &
                                ncld,        &
@@ -1030,12 +1026,9 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kbdim,kproma,klev
+    INTEGER, INTENT(in) :: kbdim,klev
     REAL, INTENT(in) :: ptstep
-    REAL, INTENT(in) :: ppres(kbdim,klev),  &
-                            ptemp(kbdim,klev),  &
-                            prv(kbdim,klev),    &
-                            prs(kbdim,klev)
+    REAL, INTENT(in) :: ptemp(kbdim,klev)
 
     TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld), &
                                       pice(kbdim,klev,nice),  &
@@ -1110,9 +1103,9 @@ CONTAINS
   ! as of referenced as [Mor05]
   !
   !***********************************************
-  SUBROUTINE ice_immers_nucl(kproma,kbdim,klev,   &
-                      pcloud,pice,ppres, &
-                      ptemp,ptt,prv,prs,ptstep, time )
+  SUBROUTINE ice_immers_nucl(kbdim,klev,   &
+                      pcloud,pice, &
+                      ptemp,ptt,ptstep )
 
     USE mo_submctl, ONLY : t_section,   &
                                ncld,        &
@@ -1121,19 +1114,17 @@ CONTAINS
                                rhoic,       &
                                planck,      &
                                pi,          &
-                               nlim, prlim, &
-                               debug
+                               nlim, prlim
+
     USE mo_constants, ONLY : rd, alf, avo
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kbdim,kproma,klev
-    REAL, INTENT(in) :: ptstep, time
-    REAL, INTENT(in) :: ppres(kbdim,klev),  &
-                            ptemp(kbdim,klev),  &
-                            ptt(kbdim,klev),    &
-                            prv(kbdim,klev),    &
-                            prs(kbdim,klev)
+    INTEGER, INTENT(in) :: kbdim,klev
+    REAL, INTENT(in) :: ptstep
+    REAL, INTENT(in) :: ptemp(kbdim,klev),  &
+                            ptt(kbdim,klev)
+
 
     TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld), &
                                       pice(kbdim,klev,nice)
@@ -1194,12 +1185,12 @@ CONTAINS
 
   ! ------------------------------------------------------------
 
-  REAL FUNCTION calc_JCF(rn,temp,ppres,prv,prs) ! heterogenous (condensation) freezing  !!check  [Mor05] eq. (26)
+  REAL FUNCTION calc_JCF(rn,temp,prv,prs) ! heterogenous (condensation) freezing  !!check  [Mor05] eq. (26)
                       !the rate of germ formation per volume of solution
         
         USE mo_submctl, ONLY : boltz, planck,pi
         REAL, INTENT(in) :: rn,  &
-                              temp,ppres, prv,prs
+                              temp, prv,prs
         REAL :: c_1s, psi
         psi = 1.
         c_1s = 1.e19 !! 10**15 cm^-2 !! concentration of water molecules adsorbed on 1 cm^-2 of surface
@@ -1323,7 +1314,7 @@ CONTAINS
 
   ! ------------------------------------------------------------
 
-  ! Harri Kokkola pilvikurssi eq. (2.43)
+  ! Jacobson: Fundamentals of atmospheric modeling eq. (2.56)
   REAL FUNCTION calc_Lefm(temp) !! Latent heat of fusion !!check
     
     REAL, intent(in) :: temp
@@ -1345,9 +1336,9 @@ CONTAINS
 
   ! ------------------------------------------------------------
 
-  SUBROUTINE ice_melt(kproma,kbdim,klev,   &
-                      pcloud,pice,pprecp,psnow,ppres, &
-                      ptemp,prv,prs,ptstep )
+  SUBROUTINE ice_melt(kbdim,klev,   &
+                      pcloud,pice,pprecp,psnow, &
+                      ptemp )
 
     USE mo_submctl, ONLY : t_section,   &
                                ncld,        &
@@ -1361,12 +1352,8 @@ CONTAINS
 
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kbdim,kproma,klev
-    REAL, INTENT(in) :: ptstep
-    REAL, INTENT(in) :: ppres(kbdim,klev),  &
-                            ptemp(kbdim,klev),  &
-                            prv(kbdim,klev),    &
-                            prs(kbdim,klev)
+    INTEGER, INTENT(in) :: kbdim,klev
+    REAL, INTENT(in) :: ptemp(kbdim,klev)
 
     TYPE(t_section), INTENT(inout) :: pcloud(kbdim,klev,ncld), &
                                       pice(kbdim,klev,nice),   &
@@ -1416,7 +1403,7 @@ CONTAINS
   END SUBROUTINE ice_melt
 
 
-  SUBROUTINE autosnow(kproma,kbdim,klev,   &
+  SUBROUTINE autosnow(kbdim,klev,   &
                       pice,psnow         )
   !
   ! Uses a more straightforward method for converting cloud droplets to drizzle.
@@ -1432,7 +1419,7 @@ CONTAINS
     USE mo_constants, ONLY : rd
     IMPLICIT NONE
 
-    INTEGER, INTENT(in) :: kproma,kbdim,klev
+    INTEGER, INTENT(in) :: kbdim,klev
     TYPE(t_section), INTENT(inout) :: pice(kbdim,klev,nice)
     TYPE(t_section), INTENT(inout) :: psnow(kbdim,klev,nsnw)
 
